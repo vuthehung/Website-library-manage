@@ -4,12 +4,14 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const Books = () => {
     const [books, setBooks] = useState([])
     const [show, setShow] = useState(false)
     const [id, setId] = useState('')
-    const [isLogin, setIsLogin] = useState(true)
+    const isLoggedIn = useSelector(state => state.auth.isLoggedIn)
+    const user = useSelector(state => state.auth.user)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -26,11 +28,11 @@ const Books = () => {
     }
 
     const onClickView = (id) => {
-        navigate(`admin/book/${id}`)
+        navigate(`/admin/book/${id}`)
     }
 
     const onClickAdd = () => {
-        navigate('/admin/book')
+        navigate('/admin/book/-1')
     }
 
     const handleClose = () => setShow(false);
@@ -54,7 +56,7 @@ const Books = () => {
         <>  
             <div className="d-flex justify-content-between">
                 <span> <b>Danh sách sách</b></span>
-                {isLogin && (<button className="btn btn-success" onClick={() => onClickAdd()}>Thêm mới</button>)}
+                {isLoggedIn && user.is_admin && (<button className="btn btn-success" onClick={() => onClickAdd()}>Thêm mới</button>)}
             </div>
             <hr/>
             <Table striped bordered hover>
@@ -83,9 +85,9 @@ const Books = () => {
                                     <td>{book.price}</td>
                                     <td>{book.quantity_sold}</td>
                                     <td>
-                                        {isLogin && (
+                                        {isLoggedIn && user.is_admin && (
                                             <>
-                                                <Button variant="info">Xem</Button>
+                                                <Button variant="info" onClick={() => onClickView(book.id)}>Xem</Button>
                                                 <span> </span>
                                                 <Button variant="danger" onClick={() => handleShow(book.id)}>Xoá</Button>   
                                             </>

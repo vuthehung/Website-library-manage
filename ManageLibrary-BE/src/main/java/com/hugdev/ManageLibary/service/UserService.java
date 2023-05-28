@@ -19,6 +19,10 @@ public class UserService {
         return repo.save(user);
     }
 
+    public Optional<User> findById(int id) {
+        return repo.findById(id);
+    }
+
     public boolean existUser(String email) {
         return repo.existsByEmail(email);
     }

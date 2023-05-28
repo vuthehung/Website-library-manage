@@ -5,9 +5,10 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
 import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 const Book = () => {
+    const [book, setBook] = useState({})
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [category, setCategory] = useState('')
@@ -21,8 +22,26 @@ const Book = () => {
     const [eAuthor, setEAuhtor] = useState('')
     const [eDate, setEDate] = useState('')
 
+    const [disable, setDisable] = useState(true)
+
+    const param = useParams()
+    const id = param.id
     const navigate = useNavigate()
 
+    useEffect(() => {
+        getBook()
+    }, [])
+
+    const getBook = async () => {
+        let res = await axios.get(`http://localhost:8080/api/Books/${id}`)
+        console.log(res)
+        if(res && res.data && res.data.data) {
+            setBook(res.data.data)
+        }
+        if(id < 0) {
+            setDisable(false)
+        }
+    }
     useEffect(() => {
         return () => {
             image_path && URL.revokeObjectURL(image_path.preview)
@@ -31,14 +50,22 @@ const Book = () => {
 
     const handlePreviewImage = (e) => {
         const file = e.target.files[0]
+        console.log(file + ', ' + typeof file)
         file.preview = URL.createObjectURL(file)
         setImage_path(file) 
+    }
+
+    const onClickDisable = () => {
+        setDisable(false)
     }
 
     const handleSubmit = async () => {
         setETitle('')
         setEAuhtor('')
         setEDate('')
+
+        console.log(book.image_path + ', ' + typeof book.image_path)
+
         if(title !== '' && author !== '' && published_date !== '') {
             const formData = new FormData()
             formData.append('title', title)
@@ -50,15 +77,28 @@ const Book = () => {
             formData.append('des', des)
             formData.append('image_path', image_path)
 
+            for (var pair of formData.entries()) {
+                console.log(pair[0]+ ', ' + pair[1] + ', ' + typeof pair[1]); 
+            }
+
+            
             try {
                 // Gửi dữ liệu về API bằng phương thức POST của Axios
-                const response = await axios.post('http://localhost:8080/api/Books/add', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                if(id < 0) {
+                    const response = await axios.post(`http://localhost:8080/api/Books/save/${id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                    })
+                }else {
+                    const response = await axios.put(`http://localhost:8080/api/Books/save/${id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                    })
                 }
-                });
-                navigate('/admin/books')
-                console.log(response.data);
+                
+                navigate('/admin')
             } catch (error) {
                 // Xử lý lỗi nếu có
                 console.error(error);
@@ -85,64 +125,74 @@ const Book = () => {
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Tiêu đề <span style={{color: '#ff4d4f'}}>*</span> </Form.Label>
-                            <Form.Control type="text" onChange={(e) => setTitle(e.target.value)}/>
+                            <Form.Control type="text" defaultValue={book.title} disabled={disable} onChange={(e) => setTitle(e.target.value)}/>
                             {eTitle && (<p style={{color: 'red'}}>{eTitle}</p>)}
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Tác giả <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="text" onChange={(e) => setAuthor(e.target.value)}/>
+                            <Form.Control type="text" defaultValue={book.author} disabled={disable} onChange={(e) => setAuthor(e.target.value)}/>
                             {eAuthor && (<p style={{color: 'red'}}>{eAuthor}</p>)}
                         </Form.Group>
                     </Row>
                     <Form.Group as={Col}>
                         <Form.Label>Mô tả</Form.Label>
-                        <Form.Control as='textarea' style={{height: '100px'}} onChange={(e) => setDes(e.target.value)} />
+                        <Form.Control as='textarea' defaultValue={book.des} disabled={disable} style={{height: '100px'}} onChange={(e) => setDes(e.target.value)} />
                     </Form.Group>
 
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Ngày phát hành <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="date" onChange={(e) => setPublished_date(e.target.value)}/>
+                            <Form.Control type="date" defaultValue={book.publised_date} disabled={disable} onChange={(e) => setPublished_date(e.target.value)}/>
                             {eDate && (<p style={{color: 'red'}}>{eDate}</p>)}
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Số trang</Form.Label>
-                            <Form.Control type="text" onChange={(e) => setPage(e.target.value)}/>
+                            <Form.Control type="number" defaultValue={book.page} disabled={disable} onChange={(e) => setPage(e.target.value)}/>
                         </Form.Group>
                     </Row>
 
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Thể loại</Form.Label>
-                            <Form.Select onChange={(e) => setCategory(e.target.value)}>
-                                <option></option>
+                            <Form.Select disabled={disable} onChange={(e) => setCategory(e.target.value)}>
+                                <option>{book.category}</option>
                                 <option>Khoa học</option>
                                 <option>Tiểu thuyết</option>
                                 <option>Tâm lý</option>
                                 <option>Truyện</option>
+                                <option>Phát triển bản thân</option>
                             </Form.Select>
                         </Form.Group>
 
                         <Form.Group as={Col}>
                             <Form.Label>Giá <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="text" onChange={(e) => setPrice(e.target.value)}/>
+                            <Form.Control type="number" disabled={disable} defaultValue={book.price} onChange={(e) => setPrice(e.target.value)}/>
                         </Form.Group>
                     </Row>
                 </Form.Group>
 
                 <Form.Group as={Col}>
                     <Form.Label>Ảnh bìa</Form.Label>
-                    <Form.Control type="file" onChange={handlePreviewImage}/>
+                    <Form.Control type="file" disabled={disable} onChange={handlePreviewImage}/>
                     {image_path && (
                         <Image src={image_path.preview} thumbnail style={{height: '20rem'}}/>
                     )}
+                    {!image_path && book.image_path !== null && ( <Image src={`http://localhost:8080/api/Image/${book.image_path}`} thumbnail style={{height: '20rem'}}/>)}
                 </Form.Group>
             </Row>
             <hr/>
             <div className='d-flex justify-content-end'>
-                <Button variant="primary" onClick={() => handleSubmit()}>
-                    Add      
-                </Button>
+                {id > 0 ? 
+                    (disable ? (<Button variant="primary" onClick={() => onClickDisable()}>
+                                    Edit    
+                                </Button>) 
+                                : (<Button variant="primary" onClick={() => handleSubmit()}>
+                                        Save    
+                                    </Button>)) 
+                    : ((<Button variant="primary" onClick={() => handleSubmit()}>
+                            Add
+                        </Button>) )}   
+                
             </div>
         </Form>
     )

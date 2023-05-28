@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { json, useNavigate } from "react-router";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
@@ -33,6 +33,8 @@ const Login = () => {
                 if (response.status === 200) {
                     // Chuyển hướng đến trang chủ
                     dispatch(login(response.data.data))
+                    localStorage.setItem('isLoggedIn', true)
+                    localStorage.setItem('user', JSON.stringify(response.data.data))
                     console.log(response)
                     navigate('/');
                 }

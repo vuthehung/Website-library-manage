@@ -7,16 +7,106 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { useSelector } from "react-redux";
+import { logout } from "../../store/authSlice";
+import { Menu } from "@mui/material";
+import './styleC.css'
+import Table from 'react-bootstrap/esm/Table';
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = (props) => {
-    const {books, searchBook} = props
+    const {books, searchBook, newAdd} = props
+    const [trans, setTrans] = useState([])
+    const [check, setCheck] = useState(0)
+    const [disable, setDisable] = useState(true)
+    const [price, setPrice] = useState(0)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
     const [word, setWord] = useState('')
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn)
     const user = useSelector(state => state.auth.user)
-    const handleSearch = (str) => {
-        searchBook(str)
+    const dispatch = useDispatch()
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
     }
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
+
+    const handleSearch = () => {
+        searchBook(word)
+        console.log('check books: ', books)
+    }
+    const handlLogOut = () => {
+        dispatch(logout())
+        localStorage.removeItem('isLoggedIn')
+        console.log(localStorage.getItem('isLoggedIn'))
+    }
+
+    const incCartItems = async (id, quantity) => {
+        const formData = new FormData()
+        formData.append('quantity', quantity + 1)
+        try {
+            const response = await axios.put(`http://localhost:8080/api/transaction/update/${id}`, formData)
+            const cnt = check + 1
+            setCheck(cnt)
+            console.log(ok);
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            console.error(error);
+        }
+    }
+    const desCartItems = async (id, quantity) => {
+        const formData = new FormData()
+        formData.append('quantity', quantity - 1)
+        try {
+            const response = await axios.put(`http://localhost:8080/api/transaction/update/${id}`, formData)
+            const cnt = check + 1
+            setCheck(cnt)
+            console.log(ok);
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            console.error(error);
+        }
+    }
+
+    const total = ()=>{
+        let price = 0;
+        trans.map((ele,k)=>{
+            price = ele.book.price * ele.quantity + price
+        });
+        setPrice(price);
+    };
+
+    useEffect(() => {
+        getTransUser()
+    }, [newAdd, isLoggedIn, check])
+
+    const getTransUser = async () => {    
+        let res = await axios.get(`http://localhost:8080/api/transaction/user/${user.id}`)
+        console.log('trans: ', res.data)
+        if(res && res.data) {
+            setTrans(res.data)
+        }
+    }
+
+    const handlDeleteCart = async (x) => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/transaction/delete/${x}`)
+            const cnt = check + 1
+            setCheck(cnt)
+            console.log(ok);
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            console.error(error);
+        }
+    }
+
+    useEffect(()=>{
+        total();
+    },[total])
+
     return (
         <Navbar bg="light" expand="lg" className="d-flex">
             <Container fluid>
@@ -32,11 +122,15 @@ const Header = (props) => {
                         style={{width: '300px'}}
                         onChange={(e) => setWord(e.target.value)}
                         />
-                        <Button variant="outline-primary">Tìm kiếm</Button>
+                        <Button variant="outline-primary" onClick={handleSearch}>Tìm kiếm</Button>
                     </Form>
                 </Navbar.Collapse>
-                <Badge badgeContent={1} color="primary"
+                <Badge badgeContent={isLoggedIn ? trans.length : 0} color="primary"
                         id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
                 >
                     <i class="fa-solid fa-cart-shopping text-dark" style={{ fontSize: 20, cursor: "pointer", marginLeft: '100px',}}></i>
                 </Badge>
@@ -47,11 +141,83 @@ const Header = (props) => {
                 >
                     
                     {isLoggedIn && (
-                        <Nav.Link href="#action1" style={{marginLeft: '90px'}}>{user.name}</Nav.Link>
+                        // <Nav.Link href="/admin" style={{marginLeft: '90px'}}>{user.name}</Nav.Link>
+                        <NavDropdown title={user.name}>
+                            {user.is_admin && (
+                                <NavDropdown.Item>
+                                    <NavLink to="/admin" style={{textDecoration: 'none', color: 'black'}}>Trang Quản Trị</NavLink>
+                                </NavDropdown.Item>
+                            )}
+                            <NavDropdown.Item>
+                                <NavLink to="/account" style={{textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item onClick={handlLogOut}>Đăng xuất</NavDropdown.Item>
+                        </NavDropdown>
                     )}
-                    {!isLoggedIn && (<Nav.Link href="#action1" style={{marginLeft: '90px'}}>Tài khoản</Nav.Link>)}
+                    {!isLoggedIn && (<NavLink to="/login" style={{marginLeft: '90px', textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>)}
                 </Nav>
             </Container>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+            >
+                {trans.length && isLoggedIn ?
+                    <div className='card_details' style={{width:"24rem",padding:10}}>
+                        <strong>Giỏ hàng của bạn</strong>
+                        <hr/>
+                        <Table>
+                            <tbody>
+                                {
+                                    trans.map((e) => {
+                                        return (
+                                            <>
+                                                <tr>
+                                                    <td>
+                                                        <img src={`http://localhost:8080/api/Image/${e.book.image_path}`} style={{width:"5rem",height:"5rem"}} alt="" />
+                                                    </td>
+                                                    <td>
+                                                        <p>{e.book.title} - {e.book.author}</p>
+                                                        <p>Giá: {e.book.price * e.quantity}đ</p>
+                                                        {/* <p>Số lượng: {e.quantity}</p> */}
+                                                        <div className='d-flex justify-content-between align-items-center' style={{width:100,cursor:"pointer"}}>
+                                                            <span style={{cursor: 'auto'}}>Số lượng:</span>
+                                                            {e.quantity === 1 ?
+                                                                (<span style={{fontSize:20}}>-</span>)
+                                                                :
+                                                                (<span style={{fontSize:20}} onClick={() => desCartItems(e.id, e.quantity)}>-</span>)
+                                                            }
+                                                            <span style={{fontSize:20}}>{e.quantity}</span>
+                                                            <span style={{fontSize:20}} onClick={() => incCartItems(e.id, e.quantity)}>+</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className='mt-5' style={{color:"red",fontSize:20,cursor:"pointer"}} onClick={() => handlDeleteCart(e.id)}>
+                                                        <i className='fas fa-trash largetrash'></i>
+                                                    </td>
+                                                </tr>
+                                            </>
+                                        )
+                                    })
+                                }
+                                
+                            </tbody>
+                        </Table>
+                        <span>Tổng:</span>
+                        <span style={{paddingLeft: '90px'}}>{price}đ</span>
+                    </div> :
+                    <div className='card_details d-flex justify-content-center align-items-center' style={{width:"24rem",padding:10,position:"relative"}}>
+                        <i className='fas fa-close smallclose'
+                            onClick={handleClose}
+                            style={{position:"absolute",top:2,right:20,fontSize:23,cursor:"pointer"}}></i>
+                        <p style={{fontSize:20}}>Không có sản phẩm nào </p>
+                        <img src="./cart.gif" alt="" className='emptycart_img' style={{width:"5rem",padding:10}} />
+                    </div>
+                }
+            </Menu>
         </Navbar>
     )
 }

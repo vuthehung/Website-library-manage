@@ -1,11 +1,13 @@
 package com.hugdev.ManageLibary.models;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 
 @Entity
 @Table(name = "book")
+@Repository
 public class Book {
     @Id
     private int id;
@@ -21,7 +23,6 @@ public class Book {
     private String image_path;
 
     public Book() {}
-
 
 
     public Book(int id, String title, String author, String category, Date publised_date, int page, int price, int quantity_sold, String des, String image_path) {

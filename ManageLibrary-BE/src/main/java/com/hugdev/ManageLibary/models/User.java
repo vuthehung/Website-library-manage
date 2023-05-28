@@ -1,9 +1,11 @@
 package com.hugdev.ManageLibary.models;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Repository;
 
 @Entity
 @Table(name = "user")
+@Repository
 public class User {
     @Id
     private int id;

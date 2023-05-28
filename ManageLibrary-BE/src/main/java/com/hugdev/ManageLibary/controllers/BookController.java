@@ -30,16 +30,17 @@ public class BookController {
     }
     @GetMapping("/{id}")
     ResponseEntity<ResponseObject> getBook(@PathVariable int id) {
+        Book b = new Book();
         Optional<Book> book = bookService.getBookById(id);
         return book.isPresent() ?
             ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("ok", "Truy xuất thành công", book)
             ):
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("failed", "Không tìm thấy sách có id = " + id, "")
+            ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("failed", "Không tìm thấy sách có id = " + id, b)
             );
     }
-    @PostMapping("/add")
+    @PostMapping("/save/{id}")
     ResponseEntity<ResponseObject> addBook(
             @RequestParam("title") String title,
             @RequestParam("author") String author,
@@ -48,7 +49,8 @@ public class BookController {
             @RequestParam("page") int page,
             @RequestParam("price") int price,
             @RequestParam("des") String des,
-            @RequestParam("image_path") MultipartFile image_path
+            @RequestParam("image_path") MultipartFile image_path,
+            @PathVariable int id
     ) throws IOException {
 
         List<Book> foundBooks = bookService.foundBooks(title.trim(), author.trim());
