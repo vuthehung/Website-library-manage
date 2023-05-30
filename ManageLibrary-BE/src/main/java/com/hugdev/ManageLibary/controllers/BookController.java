@@ -104,6 +104,32 @@ public class BookController {
                 new ResponseObject("ok", "Cập nhật thông tin sách thành công", editBook)
         );
     }
+    @PutMapping("/savef/{id}")
+    ResponseEntity<ResponseObject> editBookNotImage(
+            @RequestParam("title") String title,
+            @RequestParam("author") String author,
+            @RequestParam("category") String category,
+            @RequestParam("published_date") Date published_date,
+            @RequestParam("page") int page,
+            @RequestParam("price") int price,
+            @RequestParam("des") String des,
+            @PathVariable int id
+    ) throws IOException {
+        Optional<Book> editBook = bookService.getBookById(id)
+                .map(book -> {
+                    book.setTitle(title);
+                    book.setAuthor(author);
+                    book.setCategory(category);
+                    book.setPublised_date(published_date);
+                    book.setPage(page);
+                    book.setPrice(price);
+                    book.setDes(des);
+                    return bookService.saveBook(book);
+                });
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("ok", "Cập nhật thông tin sách thành công", editBook)
+        );
+    }
     @DeleteMapping("/delete/{id}")
     ResponseEntity<ResponseObject> deleteBook(@PathVariable int id) {
         boolean exist = bookService.existBook(id);

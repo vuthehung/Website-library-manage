@@ -47,6 +47,7 @@ const Book = () => {
         if(id < 0) {
             setDisable(false)
         }
+        
     }
     useEffect(() => {
         return () => {
@@ -70,47 +71,71 @@ const Book = () => {
         setEAuhtor('')
         setEDate('')
         setShow(false)
-        console.log(book.image_path + ', ' + typeof book.image_path)
+        console.log(image_path + ', ' + typeof image_path)
         console.log(book)
 
         if(book.title !== null && book.author !== null && book.published_date !== null) {
-            const formData = new FormData()
-            formData.append('title', book.title)
-            formData.append('author', book.author)
-            formData.append('category', book.category)
-            formData.append('published_date', book.publised_date)
-            formData.append('page', book.page)
-            formData.append('price', book.price)
-            formData.append('des', book.des)
-            formData.append('image_path', image_path)
+            if(image_path) {
+                const formData = new FormData()
+                formData.append('title', book.title)
+                formData.append('author', book.author)
+                formData.append('category', book.category)
+                formData.append('published_date', book.publised_date)
+                formData.append('page', book.page)
+                formData.append('price', book.price)
+                formData.append('des', book.des)
+                formData.append('image_path', image_path)
 
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ', ' + pair[1] + ', ' + typeof pair[1]); 
-            }
-
-            
-            try {
-                // Gửi dữ liệu về API bằng phương thức POST của Axios
-                if(id < 0) {
-                    const response = await axios.post(`http://localhost:8080/api/Books/save/${id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                    })
-                }else {
-                    const response = await axios.put(`http://localhost:8080/api/Books/save/${id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                    })
+                for (var pair of formData.entries()) {
+                    console.log(pair[0]+ ', ' + pair[1] + ', ' + typeof pair[1]); 
                 }
-                
-                navigate('/admin')
-            } catch (error) {
-                // Xử lý lỗi nếu có
-                console.error(error);
-                setETitle('Sách đã có do trùng tiêu đề và tác giả')
+                try {
+                    if(id < 0) {
+                        const response = await axios.post(`http://localhost:8080/api/Books/save/${id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                        })
+                    }else {
+                        const response = await axios.put(`http://localhost:8080/api/Books/save/${id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                        })
+                    }
+                    
+                    navigate('/admin')
+                } catch (error) {
+                    // Xử lý lỗi nếu có
+                    console.error(error);
+                    setETitle('Sách đã có do trùng tiêu đề và tác giả')
+                }
+            }else {
+                const formData = new FormData()
+                formData.append('title', book.title)
+                formData.append('author', book.author)
+                formData.append('category', book.category)
+                formData.append('published_date', book.publised_date)
+                formData.append('page', book.page)
+                formData.append('price', book.price)
+                formData.append('des', book.des)
+                try {
+                    if(id > 0) {
+                        const response = await axios.put(`http://localhost:8080/api/Books/savef/${id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                        })
+                        navigate('/admin')
+                    }
+                } catch (error) {
+                    // Xử lý lỗi nếu có
+                    console.error(error);
+                    setETitle('Sách đã có do trùng tiêu đề và tác giả')
+                }
             }
+            
+            
         }else {
             if(book.title === '' || book.title === null) {
                 setETitle('Vui lòng nhập tiêu đề sách')
