@@ -21,21 +21,21 @@ public class FileUploadController {
     //Inject Storage Service here
     @Autowired
     private IStorageService storageService;
-//    @PostMapping("")
-//    public ResponseEntity<ResponseObject> uploadFile(@RequestParam("file")MultipartFile file) {
-//        try {
-//            //save files to a folder => use a service
-//            String generatedFileName = storageService.storeFile(file);
-//            return ResponseEntity.status(HttpStatus.OK).body(
-//                    new ResponseObject("ok", "upload file successfully", generatedFileName)
-//            );
-//            //06a290064eb94a02a58bfeef36002483.png => how to open this file in Web Browser ?
-//        }catch (Exception exception) {
-//            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-//                    new ResponseObject("ok", exception.getMessage(), "")
-//            );
-//        }
-//    }
+    @PostMapping("")
+    public ResponseEntity<ResponseObject> uploadFile(@RequestParam("file")MultipartFile file) {
+        try {
+            //save files to a folder => use a service
+            String generatedFileName = storageService.storeFile(file);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "upload file successfully", generatedFileName)
+            );
+            //06a290064eb94a02a58bfeef36002483.png => how to open this file in Web Browser ?
+        }catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+                    new ResponseObject("ok", exception.getMessage(), "")
+            );
+        }
+    }
     //get image's url
     @GetMapping("/{fileName:.+}")
     // /files/06a290064eb94a02a58bfeef36002483.png

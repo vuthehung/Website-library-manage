@@ -24,6 +24,9 @@ public class TransService {
     public Optional<Transaction> findById(int id) {
         return repo.findById(id);
     }
+    public Optional<Transaction> findByBookIdAndUserId(int bookId, int userId) {
+        return repo.findByBookIdAndUserId(bookId, userId);
+    }
     public Transaction save(Transaction trans) {
         return repo.save(trans);
     }

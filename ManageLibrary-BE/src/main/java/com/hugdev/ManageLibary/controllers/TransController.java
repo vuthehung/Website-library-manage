@@ -33,6 +33,10 @@ public class TransController {
         return transSe.getTranUserId(id);
     }
 
+    @GetMapping("/book/{bookID}/user/{userId}")
+    public Optional<Transaction> findByBookId(@PathVariable("bookId") int bookId, @PathVariable("userId") int userId) {
+        return transSe.findByBookIdAndUserId(bookId, userId);
+    }
     @PostMapping("/add")
     public Transaction addTrans(
             @RequestParam("userId") int userId,

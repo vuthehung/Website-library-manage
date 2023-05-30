@@ -108,16 +108,16 @@ const Books = () => {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                <Modal.Title>Xác nhận</Modal.Title>
+                <Modal.Title>Thông báo xác nhận</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Bạn có muốn xoá sách có id là {id}
+                    Bạn có muốn xoá sách này?
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="danger" onClick={() => handlDelete(id)}>Delete</Button>
+                <Button variant="success" onClick={() => handlDelete(id)}>Confirm</Button>
                 </Modal.Footer>
             </Modal>
         </>

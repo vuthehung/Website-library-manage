@@ -77,12 +77,12 @@ const Review = (props) => {
     return (
         <>
             <Button variant="primary" onClick={isLoggedIn ? (handleShow) : (naviLogin)}>
-                Thêm nhận xét
+                Thêm đánh giá
             </Button>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Nhận xét của bạn</Modal.Title>
+                    <Modal.Title>Đánh giá sản phẩm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                 <Col>

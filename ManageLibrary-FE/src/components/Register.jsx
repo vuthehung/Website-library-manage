@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { NavLink } from "react-router-dom";
 
 const Register = () => {
     const [name, setName] = useState('')
@@ -76,8 +77,10 @@ const Register = () => {
                         </div>
                     </form>
                 </div>
+                <hr/>
+                <span>Đã có tài khoản?<NavLink to="/login"> Đăng nhập</NavLink></span>
             </div>
-
+            
         </div>
     )
 }

@@ -3,6 +3,7 @@ import { json, useNavigate } from "react-router";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
+import { NavLink } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -73,7 +74,7 @@ const Login = () => {
                     </form>
                 </div>
                 <hr/>
-                <span>Chưa có tài khoản?<a href="/register"> Đăng ký</a></span>
+                <span>Chưa có tài khoản?<NavLink to="/register"> Đăng ký</NavLink></span>
             </div>
 
         </div>

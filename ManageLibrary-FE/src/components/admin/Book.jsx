@@ -1,21 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
 
 const Book = () => {
     const [book, setBook] = useState({})
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [category, setCategory] = useState('')
-    const [published_date, setPublished_date] = useState('')
-    const [page, setPage] = useState('')
-    const [price, setPrice] = useState('')
-    const [des, setDes] = useState('')
     const [image_path, setImage_path] = useState()
 
     const [eTitle, setETitle] = useState('')
@@ -24,9 +18,21 @@ const Book = () => {
 
     const [disable, setDisable] = useState(true)
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     const param = useParams()
     const id = param.id
     const navigate = useNavigate()
+
+    const defaultBtn = document.querySelector('#default')
+    const uploadBtn = document.querySelector('#upload')
+
+    const onClickUpload = () => {
+        defaultBtn.click()
+    }
 
     useEffect(() => {
         getBook()
@@ -63,18 +69,19 @@ const Book = () => {
         setETitle('')
         setEAuhtor('')
         setEDate('')
-
+        setShow(false)
         console.log(book.image_path + ', ' + typeof book.image_path)
+        console.log(book)
 
-        if(title !== '' && author !== '' && published_date !== '') {
+        if(book.title !== null && book.author !== null && book.published_date !== null) {
             const formData = new FormData()
-            formData.append('title', title)
-            formData.append('author', author)
-            formData.append('category', category)
-            formData.append('published_date', published_date)
-            formData.append('page', page)
-            formData.append('price', price)
-            formData.append('des', des)
+            formData.append('title', book.title)
+            formData.append('author', book.author)
+            formData.append('category', book.category)
+            formData.append('published_date', book.publised_date)
+            formData.append('page', book.page)
+            formData.append('price', book.price)
+            formData.append('des', book.des)
             formData.append('image_path', image_path)
 
             for (var pair of formData.entries()) {
@@ -105,13 +112,13 @@ const Book = () => {
                 setETitle('Sách đã có do trùng tiêu đề và tác giả')
             }
         }else {
-            if(title === '') {
+            if(book.title === '' || book.title === null) {
                 setETitle('Vui lòng nhập tiêu đề sách')
             }
-            if(author === '') {
+            if(book.author === '' || book.author === null) {
                 setEAuhtor('Vui lòng nhập tác giả')
             }
-            if(published_date === '') {
+            if(book.published_date === '' || book.publised_date === null) {
                 setEDate('Vui lòng nhập ngày phát hành')
             }
         }
@@ -125,59 +132,65 @@ const Book = () => {
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Tiêu đề <span style={{color: '#ff4d4f'}}>*</span> </Form.Label>
-                            <Form.Control type="text" defaultValue={book.title} disabled={disable} onChange={(e) => setTitle(e.target.value)}/>
+                            <Form.Control type="text" defaultValue={book.title} disabled={disable} onChange={(e) => setBook({...book, title: e.target.value})}/>
                             {eTitle && (<p style={{color: 'red'}}>{eTitle}</p>)}
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Tác giả <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="text" defaultValue={book.author} disabled={disable} onChange={(e) => setAuthor(e.target.value)}/>
+                            <Form.Control type="text" defaultValue={book.author} disabled={disable} onChange={(e) => setBook({...book, author: e.target.value})}/>
                             {eAuthor && (<p style={{color: 'red'}}>{eAuthor}</p>)}
                         </Form.Group>
                     </Row>
                     <Form.Group as={Col}>
                         <Form.Label>Mô tả</Form.Label>
-                        <Form.Control as='textarea' defaultValue={book.des} disabled={disable} style={{height: '100px'}} onChange={(e) => setDes(e.target.value)} />
+                        <Form.Control as='textarea' defaultValue={book.des} disabled={disable} style={{height: '100px'}} onChange={(e) => setBook({...book, des: e.target.value})} />
                     </Form.Group>
 
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Ngày phát hành <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="date" defaultValue={book.publised_date} disabled={disable} onChange={(e) => setPublished_date(e.target.value)}/>
+                            <Form.Control type="date" defaultValue={book.publised_date} disabled={disable} onChange={(e) => setBook({...book, publised_date: e.target.value})}/>
                             {eDate && (<p style={{color: 'red'}}>{eDate}</p>)}
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Số trang</Form.Label>
-                            <Form.Control type="number" defaultValue={book.page} disabled={disable} onChange={(e) => setPage(e.target.value)}/>
+                            <Form.Control type="number" defaultValue={book.page} disabled={disable} onChange={(e) => setBook({...book, page: e.target.value})}/>
                         </Form.Group>
                     </Row>
 
                     <Row className='mb-3'>
                         <Form.Group as={Col}>
                             <Form.Label>Thể loại</Form.Label>
-                            <Form.Select disabled={disable} onChange={(e) => setCategory(e.target.value)}>
+                            <Form.Select disabled={disable} onChange={(e) => setBook({...book, category: e.target.value})}>
                                 <option>{book.category}</option>
                                 <option>Khoa học</option>
                                 <option>Tiểu thuyết</option>
                                 <option>Tâm lý</option>
                                 <option>Truyện</option>
                                 <option>Phát triển bản thân</option>
+                                <option>Văn học</option>
+                                <option>Kinh tế - Kinh doanh</option>
                             </Form.Select>
                         </Form.Group>
 
                         <Form.Group as={Col}>
-                            <Form.Label>Giá <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="number" disabled={disable} defaultValue={book.price} onChange={(e) => setPrice(e.target.value)}/>
+                            <Form.Label>Giá</Form.Label>
+                            <Form.Control type="number" disabled={disable} defaultValue={book.price} onChange={(e) => setBook({...book, price: e.target.value})}/>
                         </Form.Group>
                     </Row>
                 </Form.Group>
 
                 <Form.Group as={Col}>
-                    <Form.Label>Ảnh bìa</Form.Label>
-                    <Form.Control type="file" disabled={disable} onChange={handlePreviewImage}/>
-                    {image_path && (
-                        <Image src={image_path.preview} thumbnail style={{height: '20rem'}}/>
-                    )}
-                    {!image_path && book.image_path !== null && ( <Image src={`http://localhost:8080/api/Image/${book.image_path}`} thumbnail style={{height: '20rem'}}/>)}
+                    <Form.Control id='default' type="file" disabled={disable} onChange={handlePreviewImage} hidden/>
+                    <div className='d-flex justify-content-center'>
+                        <Button id='upload' variant="success" onClick={onClickUpload}>Upload</Button>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                        {image_path && (
+                            <Image src={image_path.preview} thumbnail style={{height: '20rem'}}/>
+                        )}
+                        {!image_path && book.image_path !== null && ( <Image src={`http://localhost:8080/api/Image/${book.image_path}`} thumbnail style={{height: '20rem'}}/>)}
+                    </div>
                 </Form.Group>
             </Row>
             <hr/>
@@ -189,11 +202,25 @@ const Book = () => {
                                 : (<Button variant="primary" onClick={() => handleSubmit()}>
                                         Save    
                                     </Button>)) 
-                    : ((<Button variant="primary" onClick={() => handleSubmit()}>
+                    : ((<Button variant="primary" onClick={handleShow}>
                             Add
                         </Button>) )}   
                 
             </div>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Thông báo xác nhận</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Bạn có chắc chắn muốn thêm mới sách này!!</Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                </Button>
+                <Button variant="success" onClick={handleSubmit}>
+                    Confirm
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </Form>
     )
 }

@@ -15,7 +15,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 
 const Header = (props) => {
-    const {books, searchBook, newAdd} = props
+    const {books, wordSearch, newAdd} = props
     const [trans, setTrans] = useState([])
     const [check, setCheck] = useState(0)
     const [disable, setDisable] = useState(true)
@@ -34,10 +34,10 @@ const Header = (props) => {
         setAnchorEl(null);
     }
 
-    const handleSearch = () => {
-        searchBook(word)
-        console.log('check books: ', books)
-    }
+    // const handleSearch = () => {
+    //     searchBook(word)
+    //     console.log('check books: ', books)
+    // }
     const handlLogOut = () => {
         dispatch(logout())
         localStorage.removeItem('isLoggedIn')
@@ -108,28 +108,26 @@ const Header = (props) => {
     },[total])
 
     return (
-        <Navbar bg="light" expand="lg" className="d-flex">
-            <Container fluid>
-                <NavLink to='/' className='text-decoration-none text-dark mx-3' style={{fontSize: 30}}>Library Book</NavLink>
-                <Navbar.Toggle aria-controls="navbarScroll" />
-                <Navbar.Collapse id="navbarScroll">
-                    <Form className="d-flex">
-                        <Form.Control
-                        type="search"
-                        placeholder="Tìm sách mà bạn muốn"
-                        className="me-2"
-                        aria-label="Search"
-                        style={{width: '300px'}}
-                        onChange={(e) => setWord(e.target.value)}
-                        />
-                        <Button variant="outline-primary" onClick={handleSearch}>Tìm kiếm</Button>
-                    </Form>
-                </Navbar.Collapse>
+        <Navbar bg="light" expand="lg" className="header">
+            <Container className="container">
+                <NavLink to='/' className='text-decoration-none navbar-brand'>Library Book</NavLink>
+                <Form className="d-flex">
+                    <Form.Control
+                    type="search"
+                    placeholder="Tìm sách mà bạn muốn"
+                    className="me-2"
+                    aria-label="Search"
+                    style={{width: '400px', marginLeft: '100px'}}
+                    onChange={(e) => wordSearch(e.target.value)}
+                    />
+                    {/* <Button variant="outline-primary" onClick={handleSearch}>Search</Button> */}
+                </Form>
                 <Badge badgeContent={isLoggedIn ? trans.length : 0} color="primary"
                         id="basic-button"
                         aria-controls={open ? 'basic-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
+                        style={{marginLeft: '50px'}}
                         onClick={handleClick}
                 >
                     <i class="fa-solid fa-cart-shopping text-dark" style={{ fontSize: 20, cursor: "pointer", marginLeft: '100px',}}></i>
@@ -142,7 +140,7 @@ const Header = (props) => {
                     
                     {isLoggedIn && (
                         // <Nav.Link href="/admin" style={{marginLeft: '90px'}}>{user.name}</Nav.Link>
-                        <NavDropdown title={user.name}>
+                        <NavDropdown title={user.name} style={{paddingLeft: '80px'}}>
                             {user.is_admin && (
                                 <NavDropdown.Item>
                                     <NavLink to="/admin" style={{textDecoration: 'none', color: 'black'}}>Trang Quản Trị</NavLink>
@@ -187,12 +185,12 @@ const Header = (props) => {
                                                         <div className='d-flex justify-content-between align-items-center' style={{width:100,cursor:"pointer"}}>
                                                             <span style={{cursor: 'auto'}}>Số lượng:</span>
                                                             {e.quantity === 1 ?
-                                                                (<span style={{fontSize:20}}>-</span>)
+                                                                (<span style={{fontSize:18}}>-</span>)
                                                                 :
-                                                                (<span style={{fontSize:20}} onClick={() => desCartItems(e.id, e.quantity)}>-</span>)
+                                                                (<span style={{fontSize:18}} onClick={() => desCartItems(e.id, e.quantity)}>-</span>)
                                                             }
-                                                            <span style={{fontSize:20}}>{e.quantity}</span>
-                                                            <span style={{fontSize:20}} onClick={() => incCartItems(e.id, e.quantity)}>+</span>
+                                                            <span style={{fontSize:16}}>{e.quantity}</span>
+                                                            <span style={{fontSize:18}} onClick={() => incCartItems(e.id, e.quantity)}>+</span>
                                                         </div>
                                                     </td>
                                                     <td className='mt-5' style={{color:"red",fontSize:20,cursor:"pointer"}} onClick={() => handlDeleteCart(e.id)}>

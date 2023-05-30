@@ -96,7 +96,6 @@ public class BookController {
                     book.setPublised_date(published_date);
                     book.setPage(page);
                     book.setPrice(price);
-                    book.setQuantity_sold(0);
                     book.setDes(des);
                     book.setImage_path(generatedFileName);
                     return bookService.saveBook(book);
