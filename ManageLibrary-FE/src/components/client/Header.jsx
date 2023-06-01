@@ -111,49 +111,54 @@ const Header = (props) => {
         <Navbar bg="light" expand="lg" className="header">
             <Container className="container">
                 <NavLink to='/' className='text-decoration-none navbar-brand'>Library Book</NavLink>
-                <Form className="d-flex">
-                    <Form.Control
-                    type="search"
-                    placeholder="Tìm sách mà bạn muốn"
-                    className="me-2"
-                    aria-label="Search"
-                    style={{width: '400px', marginLeft: '100px'}}
-                    onChange={(e) => wordSearch(e.target.value)}
-                    />
-                    {/* <Button variant="outline-primary" onClick={handleSearch}>Search</Button> */}
-                </Form>
-                <Badge badgeContent={isLoggedIn ? trans.length : 0} color="primary"
-                        id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        style={{marginLeft: '50px'}}
-                        onClick={handleClick}
-                >
-                    <i class="fa-solid fa-cart-shopping text-dark" style={{ fontSize: 20, cursor: "pointer", marginLeft: '100px',}}></i>
-                </Badge>
-                <Nav
-                    className="me-auto my-2 my-lg-0"
-                    style={{ maxHeight: '100px'}}
-                    navbarScroll
-                >
-                    
-                    {isLoggedIn && (
-                        // <Nav.Link href="/admin" style={{marginLeft: '90px'}}>{user.name}</Nav.Link>
-                        <NavDropdown title={user.name} style={{paddingLeft: '80px'}}>
-                            {user.is_admin && (
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav>
+                        <Form className="d-flex">
+                            <Form.Control
+                            type="search"
+                            placeholder="Tìm sách mà bạn muốn"
+                            className="me-2"
+                            aria-label="Search"
+                            style={{width: '400px', maxWidth: '340px', marginLeft: '100px'}}
+                            onChange={(e) => wordSearch(e.target.value)}
+                            />
+                            {/* <Button variant="outline-primary" onClick={handleSearch}>Search</Button> */}
+                        </Form>
+                    </Nav>
+                    <Badge badgeContent={isLoggedIn ? trans.length : 0} color="primary"
+                            id="basic-button"
+                            aria-controls={open ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            style={{marginLeft: '50px'}}
+                            onClick={handleClick}
+                    >
+                        <i class="fa-solid fa-cart-shopping text-dark" style={{ fontSize: 20, cursor: "pointer", marginLeft: '100px',}}></i>
+                    </Badge>
+                    <Nav
+                        className="me-auto my-2 my-lg-0"
+                        style={{ maxHeight: '140px'}}
+                    >
+                        
+                        {isLoggedIn && (
+                            // <Nav.Link href="/admin" style={{marginLeft: '90px'}}>{user.name}</Nav.Link>
+                            <NavDropdown title={user.name} style={{paddingLeft: '80px'}}>
+                                {user.is_admin && (
+                                    <NavDropdown.Item>
+                                        <NavLink to="/admin" style={{textDecoration: 'none', color: 'black'}}>Trang Quản Trị</NavLink>
+                                    </NavDropdown.Item>
+                                )}
                                 <NavDropdown.Item>
-                                    <NavLink to="/admin" style={{textDecoration: 'none', color: 'black'}}>Trang Quản Trị</NavLink>
+                                    <NavLink to="/account" style={{textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>
                                 </NavDropdown.Item>
-                            )}
-                            <NavDropdown.Item>
-                                <NavLink to="/account" style={{textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>
-                            </NavDropdown.Item>
-                            <NavDropdown.Item onClick={handlLogOut}>Đăng xuất</NavDropdown.Item>
-                        </NavDropdown>
-                    )}
-                    {!isLoggedIn && (<NavLink to="/login" style={{marginLeft: '90px', textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>)}
-                </Nav>
+                                <NavDropdown.Item onClick={handlLogOut}>Đăng xuất</NavDropdown.Item>
+                            </NavDropdown>
+                        )}
+                        {!isLoggedIn && (<NavLink to="/login" style={{marginLeft: '90px', textDecoration: 'none', color: 'black'}}>Tài khoản</NavLink>)}
+                    </Nav>
+                </Navbar.Collapse>
+                
             </Container>
             <Menu
                 id="basic-menu"

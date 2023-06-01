@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import Table  from "react-bootstrap/Table";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Container from 'react-bootstrap/Container';
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
+import HeaderAd from "./HeaderAd";
 
 const Books = () => {
     const [books, setBooks] = useState([])
@@ -54,53 +56,56 @@ const Books = () => {
     }
     return(
         <>  
-            <div className="d-flex justify-content-between">
-                <span> <b>Danh sách sách</b></span>
-                {isLoggedIn && user.is_admin && (<button className="btn btn-success" onClick={() => onClickAdd()}>Thêm mới</button>)}
-            </div>
-            <hr/>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                    <th>Tiêu đề</th>
-                    <th>Tác giả</th>
-                    <th>Thể loại</th>
-                    <th>Ngày phát hành</th>
-                    <th>Số trang</th>
-                    <th>Giá</th>
-                    <th>Số lượng đã bán</th>
-                    <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {books && books.length > 0 && 
-                        books.map((book, idx) => {
-                            return (
-                                <tr key={book.id}>
-                                    <td>{book.title}</td>
-                                    <td>{book.author}</td>
-                                    <td>{book.category}</td>
-                                    <td>{book.publised_date}</td>
-                                    <td>{book.page}</td>
-                                    <td>{book.price}</td>
-                                    <td>{book.quantity_sold}</td>
-                                    <td>
-                                        {isLoggedIn && user.is_admin && (
-                                            <>
-                                                <Button variant="info" onClick={() => onClickView(book.id)}>Xem</Button>
-                                                <span> </span>
-                                                <Button variant="danger" onClick={() => handleShow(book.id)}>Xoá</Button>   
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            
-                            )
-                        })
+            <Container>
+                <div className="d-flex justify-content-between">
+                    <span> <b>Danh sách sách</b></span>
+                    {isLoggedIn && user.is_admin && (<button className="btn btn-success" onClick={() => onClickAdd()}>Thêm mới</button>)}
+                </div>
+                <hr/>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>Tiêu đề</th>
+                        <th>Tác giả</th>
+                        <th>Thể loại</th>
+                        <th>Ngày phát hành</th>
+                        <th>Số trang</th>
+                        <th>Giá</th>
+                        <th>Số lượng đã bán</th>
+                        <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {books && books.length > 0 && 
+                            books.map((book, idx) => {
+                                return (
+                                    <tr key={book.id}>
+                                        <td>{book.title}</td>
+                                        <td>{book.author}</td>
+                                        <td>{book.category}</td>
+                                        <td>{book.publised_date}</td>
+                                        <td>{book.page}</td>
+                                        <td>{book.price}</td>
+                                        <td>{book.quantity_sold}</td>
+                                        <td>
+                                            {isLoggedIn && user.is_admin && (
+                                                <>
+                                                    <Button variant="info" onClick={() => onClickView(book.id)}>Xem</Button>
+                                                    <span> </span>
+                                                    <Button variant="danger" onClick={() => handleShow(book.id)}>Xoá</Button>   
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                
+                                )
+                            })
 
-                    }
-                </tbody>
-            </Table>
+                        }
+                    </tbody>
+                </Table>
+            </Container>
+            
             <Modal
                 show={show}
                 onHide={handleClose}

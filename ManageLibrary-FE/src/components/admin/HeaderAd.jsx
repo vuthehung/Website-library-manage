@@ -18,11 +18,11 @@ const HeaderAd = () => {
     return(
         <Navbar bg="light">
         <Container>
-          <Navbar.Brand href="/admin"><strong>Admin</strong></Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-end">
+            <NavLink to='/admin' className='text-decoration-none navbar-brand'><strong>Admin</strong></NavLink>
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
             {isLoggedIn && user.is_admin && (
-                 <NavDropdown title={user.name}>
+                <NavDropdown title={user.name}>
                     <NavDropdown.Item>
                         <NavLink to="/" style={{textDecoration: 'none', color: 'black'}}>Trang Chủ</NavLink>
                     </NavDropdown.Item>
@@ -32,7 +32,7 @@ const HeaderAd = () => {
             {!isLoggedIn && (
                 <NavLink to='/login' style={{textDecoration: 'none', color: 'black'}}>Đăng nhập</NavLink>
             )}
-          </Navbar.Collapse>
+            </Navbar.Collapse>
         </Container>
         </Navbar>
     )

@@ -22,21 +22,21 @@ const App = () => {
       // Khôi phục trạng thái đăng nhập và thông tin người dùng từ Local Storage vào Redux store
       const user = JSON.parse(localStorage.getItem('user'));
       dispatch(login(user));
-    }else {
+    } else {
       dispatch(logout())
     }
   }, [dispatch]);
   return (
     <>
-        {/* <Header/> */}
-        <Routes>
-          <Route path='/' element={<Cards />}/>
-          <Route path='/book/:id' element={<CardDetail />}/>
-          {isLoggedIn && user.is_admin && (<Route path='/admin/book/:id' element={<Book />}/>)}
-          <Route path='/admin' element={<Admin />}/>
-          <Route path='/login' element={<Login />}/>
-          <Route path='/register' element={<Register />}/>
-        </Routes>
+      {/* <Header/> */}
+      <Routes>
+        <Route path='/' element={<Cards />} />
+        <Route path='/book/:id' element={<CardDetail />} />
+        {isLoggedIn && user.is_admin && (<Route path='/admin/book/:id' element={<Book />} />)}
+        <Route path='/admin' element={<Admin />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+      </Routes>
     </>
   )
 }

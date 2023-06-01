@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
+import HeaderAd from './HeaderAd';
 
 const Book = () => {
     const [book, setBook] = useState({})
@@ -72,9 +73,9 @@ const Book = () => {
         setEDate('')
         setShow(false)
         console.log(image_path + ', ' + typeof image_path)
-        console.log(book)
+        console.log('chec book: ', book)
 
-        if(book.title !== null && book.author !== null && book.published_date !== null) {
+        if((book.title !== null && book.title !== '') && (book.author !== null && book.author !== '') && book.publised_date !== null) {
             if(image_path) {
                 const formData = new FormData()
                 formData.append('title', book.title)
@@ -131,122 +132,126 @@ const Book = () => {
                 } catch (error) {
                     // Xử lý lỗi nếu có
                     console.error(error);
-                    setETitle('Sách đã có do trùng tiêu đề và tác giả')
+                    // setETitle('Sách đã có do trùng tiêu đề và tác giả')
                 }
             }
-            
-            
+
         }else {
+            console.log('có lỗi')
             if(book.title === '' || book.title === null) {
                 setETitle('Vui lòng nhập tiêu đề sách')
             }
             if(book.author === '' || book.author === null) {
                 setEAuhtor('Vui lòng nhập tác giả')
             }
-            if(book.published_date === '' || book.publised_date === null) {
+            if(book.publised_date === null) {
                 setEDate('Vui lòng nhập ngày phát hành')
+                console.log('eDate: co loi',)
             }
         }
         
     }
     return (
-        <Form>
-            <h2 className='text-center'>Sách</h2>
-            <Row className="mb-3">
-                <Form.Group as={Col}>
-                    <Row className='mb-3'>
-                        <Form.Group as={Col}>
-                            <Form.Label>Tiêu đề <span style={{color: '#ff4d4f'}}>*</span> </Form.Label>
-                            <Form.Control type="text" defaultValue={book.title} disabled={disable} onChange={(e) => setBook({...book, title: e.target.value})}/>
-                            {eTitle && (<p style={{color: 'red'}}>{eTitle}</p>)}
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Form.Label>Tác giả <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="text" defaultValue={book.author} disabled={disable} onChange={(e) => setBook({...book, author: e.target.value})}/>
-                            {eAuthor && (<p style={{color: 'red'}}>{eAuthor}</p>)}
-                        </Form.Group>
-                    </Row>
+        <>
+            <HeaderAd/>
+            <Form>
+                <h2 className='text-center'>Sách</h2>
+                <Row className="mb-3">
                     <Form.Group as={Col}>
-                        <Form.Label>Mô tả</Form.Label>
-                        <Form.Control as='textarea' defaultValue={book.des} disabled={disable} style={{height: '100px'}} onChange={(e) => setBook({...book, des: e.target.value})} />
+                        <Row className='mb-3'>
+                            <Form.Group as={Col}>
+                                <Form.Label>Tiêu đề <span style={{color: '#ff4d4f'}}>*</span> </Form.Label>
+                                <Form.Control type="text" defaultValue={book.title} disabled={disable} onChange={(e) => setBook({...book, title: e.target.value})}/>
+                                {eTitle && (<p style={{color: 'red'}}>{eTitle}</p>)}
+                            </Form.Group>
+                            <Form.Group as={Col}>
+                                <Form.Label>Tác giả <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
+                                <Form.Control type="text" defaultValue={book.author} disabled={disable} onChange={(e) => setBook({...book, author: e.target.value})}/>
+                                {eAuthor && (<p style={{color: 'red'}}>{eAuthor}</p>)}
+                            </Form.Group>
+                        </Row>
+                        <Form.Group as={Col}>
+                            <Form.Label>Mô tả</Form.Label>
+                            <Form.Control as='textarea' defaultValue={book.des} disabled={disable} style={{height: '100px'}} onChange={(e) => setBook({...book, des: e.target.value})} />
+                        </Form.Group>
+
+                        <Row className='mb-3'>
+                            <Form.Group as={Col}>
+                                <Form.Label>Ngày phát hành <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
+                                <Form.Control type="date" defaultValue={book.publised_date} disabled={disable} onChange={(e) => setBook({...book, publised_date: e.target.value})}/>
+                                {eDate && (<p style={{color: 'red'}}>{eDate}</p>)}
+                            </Form.Group>
+                            <Form.Group as={Col}>
+                                <Form.Label>Số trang</Form.Label>
+                                <Form.Control type="number" defaultValue={book.page} disabled={disable} onChange={(e) => setBook({...book, page: e.target.value})}/>
+                            </Form.Group>
+                        </Row>
+
+                        <Row className='mb-3'>
+                            <Form.Group as={Col}>
+                                <Form.Label>Thể loại</Form.Label>
+                                <Form.Select disabled={disable} onChange={(e) => setBook({...book, category: e.target.value})}>
+                                    <option>{book.category}</option>
+                                    <option>Khoa học</option>
+                                    <option>Tiểu thuyết</option>
+                                    <option>Tâm lý</option>
+                                    <option>Truyện</option>
+                                    <option>Phát triển bản thân</option>
+                                    <option>Văn học</option>
+                                    <option>Kinh tế - Kinh doanh</option>
+                                </Form.Select>
+                            </Form.Group>
+
+                            <Form.Group as={Col}>
+                                <Form.Label>Giá</Form.Label>
+                                <Form.Control type="number" disabled={disable} defaultValue={book.price} onChange={(e) => setBook({...book, price: e.target.value})}/>
+                            </Form.Group>
+                        </Row>
                     </Form.Group>
 
-                    <Row className='mb-3'>
-                        <Form.Group as={Col}>
-                            <Form.Label>Ngày phát hành <span style={{color: '#ff4d4f'}}>*</span></Form.Label>
-                            <Form.Control type="date" defaultValue={book.publised_date} disabled={disable} onChange={(e) => setBook({...book, publised_date: e.target.value})}/>
-                            {eDate && (<p style={{color: 'red'}}>{eDate}</p>)}
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Form.Label>Số trang</Form.Label>
-                            <Form.Control type="number" defaultValue={book.page} disabled={disable} onChange={(e) => setBook({...book, page: e.target.value})}/>
-                        </Form.Group>
-                    </Row>
-
-                    <Row className='mb-3'>
-                        <Form.Group as={Col}>
-                            <Form.Label>Thể loại</Form.Label>
-                            <Form.Select disabled={disable} onChange={(e) => setBook({...book, category: e.target.value})}>
-                                <option>{book.category}</option>
-                                <option>Khoa học</option>
-                                <option>Tiểu thuyết</option>
-                                <option>Tâm lý</option>
-                                <option>Truyện</option>
-                                <option>Phát triển bản thân</option>
-                                <option>Văn học</option>
-                                <option>Kinh tế - Kinh doanh</option>
-                            </Form.Select>
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                            <Form.Label>Giá</Form.Label>
-                            <Form.Control type="number" disabled={disable} defaultValue={book.price} onChange={(e) => setBook({...book, price: e.target.value})}/>
-                        </Form.Group>
-                    </Row>
-                </Form.Group>
-
-                <Form.Group as={Col}>
-                    <Form.Control id='default' type="file" disabled={disable} onChange={handlePreviewImage} hidden/>
-                    <div className='d-flex justify-content-center'>
-                        <Button id='upload' variant="success" onClick={onClickUpload}>Upload</Button>
-                    </div>
-                    <div className='d-flex justify-content-center'>
-                        {image_path && (
-                            <Image src={image_path.preview} thumbnail style={{height: '20rem'}}/>
-                        )}
-                        {!image_path && book.image_path !== null && ( <Image src={`http://localhost:8080/api/Image/${book.image_path}`} thumbnail style={{height: '20rem'}}/>)}
-                    </div>
-                </Form.Group>
-            </Row>
-            <hr/>
-            <div className='d-flex justify-content-end'>
-                {id > 0 ? 
-                    (disable ? (<Button variant="primary" onClick={() => onClickDisable()}>
-                                    Edit    
-                                </Button>) 
-                                : (<Button variant="primary" onClick={() => handleSubmit()}>
-                                        Save    
-                                    </Button>)) 
-                    : ((<Button variant="primary" onClick={handleShow}>
-                            Add
-                        </Button>) )}   
-                
-            </div>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                <Modal.Title>Thông báo xác nhận</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Bạn có chắc chắn muốn thêm mới sách này!!</Modal.Body>
-                <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancel
-                </Button>
-                <Button variant="success" onClick={handleSubmit}>
-                    Confirm
-                </Button>
-                </Modal.Footer>
-            </Modal>
-        </Form>
+                    <Form.Group as={Col}>
+                        <Form.Control id='default' type="file" disabled={disable} onChange={handlePreviewImage} hidden/>
+                        <div className='d-flex justify-content-center'>
+                            <Button id='upload' variant="success" onClick={onClickUpload}>Upload</Button>
+                        </div>
+                        <div className='d-flex justify-content-center'>
+                            {image_path && (
+                                <Image src={image_path.preview} thumbnail style={{height: '20rem'}}/>
+                            )}
+                            {!image_path && book.image_path !== null && ( <Image src={`http://localhost:8080/api/Image/${book.image_path}`} thumbnail style={{height: '20rem'}}/>)}
+                        </div>
+                    </Form.Group>
+                </Row>
+                <hr/>
+                <div className='d-flex justify-content-end'>
+                    {id > 0 ? 
+                        (disable ? (<Button variant="primary" onClick={() => onClickDisable()}>
+                                        Edit    
+                                    </Button>) 
+                                    : (<Button variant="primary" onClick={() => handleSubmit()}>
+                                            Save    
+                                        </Button>)) 
+                        : ((<Button variant="primary" onClick={handleShow}>
+                                Add
+                            </Button>) )}   
+                    
+                </div>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Thông báo xác nhận</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Bạn có chắc chắn muốn thêm mới sách này!!</Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="success" onClick={handleSubmit}>
+                        Confirm
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Form>
+        </>
     )
 }
 
